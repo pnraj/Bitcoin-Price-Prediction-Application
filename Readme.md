@@ -12,16 +12,17 @@ Bitcoin: Basic explanation ????
  - Numpy
  - matplotlib
  - Tensorflow
+ - yfinance
 
  ## Steps:
  - Setup the Environment and Libraries
- - Dataset Source
+ - Dataset: Source & Features
  - Neural Network Model Architecture
  - Exploring the Bitcoin Dataset and Preparing Data for a Model
  - Training a Neural Network with Different Hyperparameters
- - Assembling a Deep Learning System
- - Optimizing a Deep Learning Model
- - Deploying a Deep Learning Application
+   - Creating environment for model
+   - Hyperparameters Optimization
+ - Productization & Deploying a Deep Learning Application
 
 <hr>
 
@@ -44,10 +45,6 @@ A `requirement.txt` has attached in this repo, run it CMD will install all requi
 $ pip install –r requirements.txt
 ```
 
-<p align = "center">
-<img src = ".\images\pip_install.png"> </img> </p>
-
-
 This will install the libraries used in this project in that virtual environment. It will do nothing if they are already available. If the library is getting installed, a progress bar will be shown, else it will notify that 'requirement is already specified'. 
 
 To check the available libraries installed, please use the following command:
@@ -59,9 +56,15 @@ $ pip list
 <p align = "center">
 <img src = ".\images\pip_list.png"> </img> </p>
 
+<hr>
+
 ### Dataset:
 
 - This Dataset was bitcoin price from 2013 to 2014 with `open`, `close`, `high`, `low`, `volume`, `iso_week`
+
+    <p align = "center">
+    <img src = ".\images\bitcoin_price.png"> </img> </p>
+
 - This dataset, which is very useful for understanding how `neural networks models` can achieve a `high level of accuracy with great efficiency`. 
 
 <hr>
@@ -104,6 +107,8 @@ plt.plot(bitcoin['date'], bitcoin['close'])
 <p align = "center">
 <img src = ".\images\bitcoin_chart.png"> </img> </p>
 
+<hr>
+
 ### Preparing Dataset for Model
 Neural networks typically work with either [matrices](https://en.wikipedia.org/wiki/Matrix_(mathematics)) or [tensors](https://en.wikipedia.org/wiki/Tensor). Our data needs to fit that structure before it can be used by either `keras` (or `tensorflow`). 
 
@@ -139,6 +144,8 @@ train_set_weeks = bitcoin_recent['iso_week'].unique()[0:boundary]
 test_set_weeks = bitcoin_recent[~bitcoin_recent['iso_week'].isin(train_set_weeks)]['iso_week'].unique()
 
 ```
+<hr>
+
 ### Storing Output
 
 ```py
@@ -147,6 +154,8 @@ bitcoin_recent.to_csv('data/bitcoin_recent.csv', index=False)
 train_dataset.to_csv('data/train_dataset.csv', index=False)
 
 ```
+<hr>
+
 ## Using Keras as a TensorFlow Interface
 
 We are using Keras because it simplifies the TensorFlow interface into general abstractions and, in TensorFlow 2.0, this is the default API in this version. In the backend, the computations are still performed in TensorFlow, but we spend less time worrying about individual components
@@ -182,6 +191,17 @@ model.save('bitcoin_lstm_v0.h5')
 
 ## Training a Neural Network with Different Hyperparameters
 
+### Creating environment for model
+
+- Re-train Model with TensorBoard
+- Evaluate LSTM Model
+- Interpreting the Model Results
+- Make Predictions
+  - De-normalized Predictions
+- Calculate RMSE and MAPE
+
+### Hyperparameters Optimization
+
 1. Using your Terminal / CMD, navigate to the directory cloned from this repo and execute the following command to start TensorBoard:
    
     ``` sh
@@ -213,3 +233,27 @@ model.save('bitcoin_lstm_v0.h5')
 
     model.fit(X_train, y_train, epochs=5, validation_data=(X_test, y_test),callbacks=[tensorboard_callback])
    
+## <u> Productization & Deploying a Deep Learning Application </u>
+
+## Re-training a model dynamically
+
+Handling New Data: Models can be trained once using a set of data and can then be used to make predictions. Such static models can be very useful, but it is often the case that we want our model to continuously learn from new data—and to continuously get better as it does so.
+
+we will be using two different code bases to help us build our web application: the `Yahoo Finance API` and `Model()` which we built 
+
+```py
+
+import yfinance as yf
+ticker = yf.Ticker("BTC-USD")
+historic_data = ticker.history(period='max')
+
+```
+
+### Deploying a Model as a Web App
+
+In order to deploy our web applications, we will use the tools and technologies 
+- `Flask` is key because it helps us create an HTTP interface for our model, allowing us to access an HTTP endpoint (such as /predict) and receive data back in a universal format. The other components are used because they are popular choices 
+- `Docker` is contineration tool which helps to depoy app without having any diffculty of maintaning dependieces
+
+
+
