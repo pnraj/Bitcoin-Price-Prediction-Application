@@ -15,7 +15,8 @@ Bitcoin: Basic explanation ????
 
  ## Steps:
  - Setup the Environment and Libraries
- - Choosing the Right Model Architecture
+ - Dataset Source
+ - Neural Network Model Architecture
  - Exploring the Bitcoin Dataset and Preparing Data for a Model
  - Training a Neural Network with Different Hyperparameters
  - Assembling a Deep Learning System
@@ -60,15 +61,12 @@ $ pip list
 
 ### Dataset:
 
-- The network that used here is trained to recognize numerical digits (integers) using `images of handwritten digits`. It uses the `MNIST dataset`, a classic dataset frequently used for exploring pattern recognition tasks.
-  
-- The `Modified National Institute of Standards and Technology (MNIST)` dataset contains a training set of `60,000` images and a test set of `10,000` images. Each image contains a single handwritten number. 
-  
-- This dataset, which is derived from one created by the US Government is very useful for understanding how `neural networks models` can achieve a `high level of accuracy with great efficiency`. 
+- This Dataset was bitcoin price from 2013 to 2014 with `open`, `close`, `high`, `low`, `volume`, `iso_week`
+- This dataset, which is very useful for understanding how `neural networks models` can achieve a `high level of accuracy with great efficiency`. 
 
 <hr>
 
-## Neural Network Model Architecture
+### Neural Network Model Architecture
 
 Considering the available architecture possibilities, there are two popular architectures that are often used as starting points for several applications: 
 - Convolutional Neural Networks (CNNs)
@@ -93,7 +91,7 @@ model.add(Dense(10, activation = 'softmax'))
 
 ## Exploring the Bitcoin Dataset and Preparing Data for a Model
 
-Import `lib` mentioned in requirments, read dataset into variable `bitcoin` by load file from `.\data\bitcoin_dataset.csv` on jupyter nootbook `.nootbook\Exploring_Bitcoin_Dataset.ipynb`
+Import `lib` mentioned in requirments, read dataset into variable `bitcoin` by load file from `.\data\bitcoin_dataset.csv` on jupyter notebook `.notebook\Exploring_Bitcoin_Dataset.ipynb`
 
 ```py
 bitcoin.set_index('date')['close'].plot(linewidth=2, \
@@ -149,7 +147,36 @@ bitcoin_recent.to_csv('data/bitcoin_recent.csv', index=False)
 train_dataset.to_csv('data/train_dataset.csv', index=False)
 
 ```
+## Using Keras as a TensorFlow Interface
 
+We are using Keras because it simplifies the TensorFlow interface into general abstractions and, in TensorFlow 2.0, this is the default API in this version. In the backend, the computations are still performed in TensorFlow, but we spend less time worrying about individual components
+
+We are interested in building an LSTM network because those networks perform well with sequential data—and a time series is a kind of sequential data.
+
+we will be using 
+
+```py
+import tensorflow as tf
+from tensorflow import keras
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import LSTM
+from tensorflow.keras.layers import Dense, Activation
+
+
+model = Sequential()
+
+model.add(LSTM(units=number_of_periods, \
+               input_shape=(period_length, number_of_periods) \
+               return_sequences=False), stateful=True)
+
+model.add(Dense(units=period_length)) \
+          model.add(Activation("linear"))
+
+model.compile(loss="mse", optimizer="rmsprop")
+
+model.save('bitcoin_lstm_v0.h5')
+
+```
 
 <hr>
 
